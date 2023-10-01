@@ -8,7 +8,7 @@ export default class TodoFormView {
     this._form.innerHTML = `
 <label id="todo-title">
     Title:
-    <input type="text" id="title-input"/>
+    <input type="text" id="title-input" required/>
 </label>
 <label id="todo-description">
     Description:
@@ -39,12 +39,31 @@ export default class TodoFormView {
     this.userProjects = projectLists;
     this.setupProjectsDropDown();
 
+    let buttons = document.createElement("div");
+
     let submit = document.createElement("button");
     submit.id = "submit-todo-bttn";
     submit.textContent = "Add";
-    submit.style.width = "100%";
 
-    this.form.appendChild(submit);
+    let reset = document.createElement("button");
+    reset.id = "reset-todo-bttn";
+    reset.textContent = "Clear";
+    reset.type = "reset";
+
+    let cancel = document.createElement("button");
+    cancel.id = "cancel-todo-bttn";
+    cancel.textContent = "Cancel";
+    cancel.type = "button";
+    cancel.addEventListener("click", (e) => {
+      this.form.reset();
+      this.form.style.display = "none";
+    });
+
+    buttons.appendChild(submit);
+    buttons.appendChild(reset);
+    buttons.appendChild(cancel);
+
+    this.form.appendChild(buttons);
 
     this.form.addEventListener("submit", (e) => {
       const titleInput = document.getElementById("title-input");

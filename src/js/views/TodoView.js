@@ -7,7 +7,7 @@ export default class TodoView {
   }
 
   _render(todo) {
-    let title = document.createElement("h1");
+    let title = document.createElement("h3");
     title.textContent = todo.title;
 
     let description = document.createElement("p");

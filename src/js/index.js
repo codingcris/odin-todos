@@ -30,14 +30,14 @@ import Storage from "./utils/Storage";
   // receives an array of the current user project/list names for the purpose of choosing a project/list for new todo tasks
   let todoForm = new TodoFormView(projectNames);
 
-  // a view class which handles the rendering and interactions of the elements in a collection of todo tasks.
-  let todoListView = new TodoListView();
+  // // a view class which handles the rendering and interactions of the elements in a collection of todo tasks.
+  // let todoListView = new TodoListView();
 
-  todosSection.appendChild(todoForm.form);
-  todosSection.appendChild(todoListView.list);
+  // todosSection.appendChild(todoForm.form);
+  // todosSection.appendChild(todoListView.list);
 
   // Controller class which handles interactions between different app components
-  let todoController = new TodoController(todoForm, todoListView, storage);
+  let todoController = new TodoController(todoForm, todosSection, storage);
 
   content.appendChild(todosSection);
 })();

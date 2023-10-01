@@ -1,9 +1,10 @@
 import Todo from "../models/Todo";
 import TodoView from "../views/TodoView";
+import TodoListView from "../views/TodoListView";
 
 // Controller class for the different app components
 export default class TodoController {
-  constructor(todoFormView, todoListView, storage) {
+  constructor(todoFormView, todosSection, storage) {
     this.storage = storage;
     // a collection of todo tasks
     this._todos;
@@ -19,15 +20,18 @@ export default class TodoController {
     todoFormView.addProject = (projectName) => {
       return this.addProject(projectName);
     };
+    todosSection.appendChild(todoFormView.form);
 
-    // passes the todos collection to the todoListView for rendering
-    this.todoListView = todoListView;
-    this.todoListView.todos = this._todos;
-    this.todoListView.render();
+    this._listViews = {};
+    this._loadListViews();
 
-    this.todoListView.newTodo = () => {
-      this.newTodo();
-    };
+    this.todosListViewsSection = document.createElement("div");
+
+    for (let project in this._listViews) {
+      this.todosListViewsSection.appendChild(this._listViews[project]._content);
+    }
+
+    todosSection.appendChild(this.todosListViewsSection);
   }
 
   // takes the data for a new todo task and adds it to our this._todos collection
@@ -42,8 +46,9 @@ export default class TodoController {
 
     this.storage.addTodo(newTodo);
 
-    let todoView = new TodoView(newTodo);
-    this.todoListView.addTodo(todoView._content);
+    let todoListView = this._listViews[data.project];
+    this._listViews[data.project] = todoListView;
+    todoListView.addTodo(newTodo);
   }
 
   newTodo() {
@@ -52,7 +57,14 @@ export default class TodoController {
   }
 
   addProject(name) {
-    return this.storage.addProject(name);
+    if (this.storage.addProject(name)) {
+      let newTodoListView = new TodoListView(name, []);
+      this._listViews[name] = newTodoListView;
+      this.todosListViewsSection.appendChild(newTodoListView._content);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   loadTodos() {
@@ -74,5 +86,17 @@ export default class TodoController {
     }
 
     this._todos = projects;
+  }
+
+  _loadListViews() {
+    let temp = Object.entries(this._todos).map(([project, todos]) => {
+      let listView = new TodoListView(project, todos);
+
+      listView.newTodo = () => this.newTodo();
+
+      return [project, listView];
+    });
+
+    this._listViews = Object.fromEntries(temp);
   }
 }
