@@ -1,0 +1,15 @@
+body {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "projects todos";
+  grid-template-columns: 1fr 4fr;
+}
+
+#lists-section {
+  grid-area: projects;
+}
+
+#todos-section {
+  grid-area: todos;
+}
