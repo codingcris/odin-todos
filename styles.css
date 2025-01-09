@@ -1,15 +1,123 @@
+:root {
+  font-size: 16px;
+}
+
+*,
+* ::after,
+*::before {
+  margin: 0;
+  box-sizing: border-box;
+}
+
 body {
   display: grid;
   grid-template-areas:
     "header header"
     "projects todos";
   grid-template-columns: 1fr 4fr;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  width: 100vw;
+  background-color: #d0ccd0;
+  color: #274156;
+}
+
+.inputBttnPair {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.inputBttnPair input {
+  flex: 1;
+  height: fit-content;
+}
+
+#newListBttn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border-color: #309ac1;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+#newListBttn:hover {
+  background-color: #26c485;
+  color: white;
+}
+
+header {
+  padding: 1rem;
 }
 
 #lists-section {
+  padding: 1rem;
   grid-area: projects;
+  background-color: white;
+}
+
+#lists-display {
+  margin: 1rem 0;
 }
 
 #todos-section {
+  padding: 1rem;
   grid-area: todos;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.list-sidebar-header {
+  padding: 1rem;
+  margin: 0 -1rem;
+  cursor: pointer;
+}
+
+.list-sidebar-header:hover {
+  background-color: #26c485;
+}
+
+.selected-list {
+  background-color: #309ac1;
+}
+
+#newTodoBttn {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  font-size: 2rem;
+  cursor: pointer;
+  border-color: #309ac1;
+}
+
+#newTodoBttn:hover {
+  background-color: #26c485;
+  color: white;
+}
+
+#newTodoForm {
+  min-width: 250px;
+  max-width: 75%;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+#newTodoForm input {
+  width: 100%;
+}
+
+.todo-list {
+  background-color: white;
+  padding: 1rem;
+}
+
+.list-title-header {
+}
+
+#todos-display {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }

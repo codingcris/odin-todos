@@ -12,21 +12,33 @@
       <h1>TODOS APP</h1>
     </header>
     <section id="lists-section">
-      <input
-        type="text"
-        placeholder="New Project/List Title"
-        id="newListInput"
-      />
-      <button id="newListBttn">+</button>
+      <div class="inputBttnPair">
+        <input
+          type="text"
+          placeholder="New Project/List Title"
+          id="newListInput"
+        />
+        <button id="newListBttn">+</button>
+      </div>
+
       <div id="lists-display"></div>
     </section>
     <section id="todos-section">
-      <button id="newTodoBttn">New TODO</button>
+      <label><button id="newTodoBttn">+</button> New Todo</label>
+
       <form action="post" style="display: none" id="newTodoForm">
         <label>Title: <input type="text" id="todoTitleInput" required /></label>
         <label
           >Description: <input type="text" name="" id="todoDescriptionInput"
         /></label>
+        <label>
+          Due Date:
+          <input type="date" />
+        </label>
+        <label style="display: flex; gap: 1rem"
+          >Important:
+          <input type="checkbox" style="width: 1rem" />
+        </label>
         <button id="saveTodoBttn">Save</button>
       </form>
       <div id="todos-display"></div>

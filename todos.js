@@ -1,7 +1,8 @@
 export default (function () {
-  const defaultList = list("Your Todos");
+  const defaultList = list("All Todos");
 
   function list(title) {
+    const id = crypto.randomUUID();
     const content = [];
 
     function addToList(item) {
@@ -12,10 +13,12 @@ export default (function () {
       title = newTitle;
     }
 
-    return { type: "list", title, content, addToList, setTitle };
+    return { id, type: "list", title, content, addToList, setTitle };
   }
 
   function todo(title, description = "", dueDate = null, priority = "regular") {
+    const id = crypto.randomUUID();
+
     function setTitle(newTitle) {
       title = newTitle;
     }
@@ -33,6 +36,7 @@ export default (function () {
     }
 
     return {
+      id,
       type: "todo",
       title,
       description,
@@ -45,5 +49,16 @@ export default (function () {
     };
   }
 
-  return { defaultList, list, todo };
+  function findList(id) {
+    if (id === defaultList.id) {
+      return defaultList;
+    } else {
+      for (let i of defaultList.content) {
+        if (i.id === id && i.type === "list") {
+          return i;
+        }
+      }
+    }
+  }
+  return { defaultList, list, todo, findList };
 })();
