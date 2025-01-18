@@ -2,6 +2,8 @@ import TODOS from "./todos.js";
 
 let workingList = TODOS.defaultList;
 
+// refreshes the lists-display section, a sidebar containing the names of all the contained todo lists
+// When a new list is added or a list is removed, this function is called to refresh the DOM accordingly.
 function refreshLists() {
   let listsDisplay = document.getElementById("lists-display");
   listsDisplay.innerHTML = "";
@@ -20,6 +22,9 @@ function refreshLists() {
   }
 }
 
+// when a list is selected (clicked) from the lists-display sidebar, the selected list header in the sidebar is
+// styled to indicate that it is the currently selected list. refreshLists() is called to reflect the styling
+// the workingList variable is updated to the selected list and displayTodos() called to display the todos within the new workingList.
 function selectList(e) {
   let selectedListHeader = e.target;
 
@@ -29,13 +34,15 @@ function selectList(e) {
   displayTodos();
 }
 
+// refreshes the todos-display section to display the todos within the workingList list. If no lists or todos have
+// been added to the master/default list, displays a message for the user to add todos/lists
 function displayTodos() {
   const EMPTY_LIST_WARNING = `
     <div>
-        <hr style="width=60%; margin: 1rem"></hr>
         <p style="text-align: center">You haven't added any TODOS to this List/Project yet! Add some above to see them here</p>
     </div>`;
 
+  // creates a DOM element representing the given todo. Returns the created DOM element
   function todoView(todo) {
     let todoView = document.createElement("div");
     todoView.className = "todoView";
@@ -47,6 +54,7 @@ function displayTodos() {
     return todoView;
   }
 
+  // creates a DOM element representing a todo list. Returns the created DOM element.
   function listView(list) {
     const lV = document.createElement("div");
     lV.className = "todo-list";
@@ -56,13 +64,22 @@ function displayTodos() {
     lHeader.className = "list-title-header";
 
     lV.appendChild(lHeader);
+    lV.insertAdjacentHTML(
+      "beforeend",
+      '<hr style="width=60%; margin: 1rem"></hr>',
+    );
     if (list.content.length === 0)
       lV.insertAdjacentHTML("beforeend", EMPTY_LIST_WARNING);
-
+    else {
+      for (let todo of list.content) {
+        lV.appendChild(todoView(todo));
+      }
+    }
     return lV;
   }
 
-  function topListview() {
+  // creates the DOM representation of the master/default list which contains all sublists and individual todos.
+  function masterListView() {
     const EMPTY_LIST_WARNING = `
     <div>
         <hr style="width=60%; margin: 1rem"></hr>
@@ -101,12 +118,14 @@ function displayTodos() {
   let todosDisplay = document.getElementById("todos-display");
   todosDisplay.innerHTML = "";
   if (workingList === TODOS.defaultList) {
-    topListview();
+    masterListView();
   } else {
     todosDisplay.appendChild(listView(workingList));
   }
 }
 
+// creates a new list with the title input by user within the newListInput. clears the newListInput. Refreshes the list display
+// and refreshes the todos display to contain the new list.
 function newList() {
   const newListTitleInput = document.getElementById("newListInput");
   let listName = newListTitleInput.value.trim();
@@ -122,24 +141,13 @@ function newList() {
   displayTodos();
 }
 
-const newListBttn = document.getElementById("newListBttn");
-newListBttn.onclick = () => newList();
-
-const newTodoBttn = document.getElementById("newTodoBttn");
-const newTodoForm = document.getElementById("newTodoForm");
-const saveTodoBttn = document.getElementById("saveTodoBttn");
-
-newTodoBttn.onclick = () => {
-  newTodoForm.style = "display: flex; flex-direction: column";
-};
-saveTodoBttn.onclick = (e) => {
-  e.preventDefault(); // Prevent the form from submitting
-
+// creates a new todo with the input title and adds the todo view to the DOM
+function saveNewTodo() {
   let todoTitle = document.getElementById("todoTitleInput");
 
   if (!todoTitle.value.trim()) {
     // Set custom validity and show the message if not already invalid
-    if (todoTitle.validity.valid) {
+    if (!todoTitle.validity.valid) {
       todoTitle.setCustomValidity("Must title TODO");
       todoTitle.reportValidity();
     }
@@ -152,11 +160,27 @@ saveTodoBttn.onclick = (e) => {
   let todoDescription = document.getElementById("todoDescriptionInput").value;
 
   let newTodo = TODOS.todo(todoTitle.value, todoDescription);
-  TODOS.defaultList.addToList(newTodo);
+  workingList.addToList(newTodo);
 
   newTodoForm.reset();
   newTodoForm.style.display = "none";
   displayTodos();
+}
+
+const newListBttn = document.getElementById("newListBttn");
+newListBttn.onclick = () => newList();
+
+const newTodoBttn = document.getElementById("newTodoBttn");
+const newTodoForm = document.getElementById("newTodoForm");
+const saveTodoBttn = document.getElementById("saveTodoBttn");
+
+newTodoBttn.onclick = () => {
+  newTodoForm.style = "display: flex; flex-direction: column";
+};
+
+saveTodoBttn.onclick = (e) => {
+  e.preventDefault(); // Prevent the form from submitting
+  saveNewTodo();
 };
 
 // Clear the message as the user types valid input
@@ -167,6 +191,8 @@ document.getElementById("todoTitleInput").addEventListener("input", (e) => {
   }
 });
 
+// Keeps the default/master list selectable in the lists-display sidebar. Necessary as refreshLists function
+// iterates through the default list content and therefore does not add the default list itself to the sidebar.
 function displayDefaultList() {
   let listsDisplay = document.getElementById("lists-display");
 
