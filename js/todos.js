@@ -1,6 +1,6 @@
 export default (function () {
   // the master list containing all todo sublists and individual todos. Titled "All Todos" by default
-  const defaultList = list("All Todos");
+  const defaultList = { id: crypto.randomUUID(), title: "ALL TODOS" };
   // list factory function returns a new todo list
   function list(title) {
     const id = crypto.randomUUID();

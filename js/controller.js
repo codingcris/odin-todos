@@ -1,6 +1,7 @@
+import STORAGE from "./storage.js";
 import TODOS from "./todos.js";
 
-let workingList = TODOS.defaultList;
+let workingList = STORAGE.masterList;
 
 // refreshes the lists-display section, a sidebar containing the names of all the contained todo lists
 // When a new list is added or a list is removed, this function is called to refresh the DOM accordingly.
@@ -9,7 +10,8 @@ function refreshLists() {
   listsDisplay.innerHTML = "";
   displayDefaultList();
 
-  for (let item of TODOS.defaultList.content) {
+  for (let key in STORAGE.masterList) {
+    let item = STORAGE.masterList[key];
     if (item.type === "list") {
       let listHeader = document.createElement("h2");
       listHeader.textContent = item.title;
@@ -27,8 +29,12 @@ function refreshLists() {
 // the workingList variable is updated to the selected list and displayTodos() called to display the todos within the new workingList.
 function selectList(e) {
   let selectedListHeader = e.target;
+  let selectedListId = selectedListHeader.getAttribute("list-id");
 
-  workingList = TODOS.findList(selectedListHeader.getAttribute("list-id"));
+  workingList =
+    selectedListId == STORAGE.masterList.id
+      ? STORAGE.masterList
+      : STORAGE.masterList[selectedListId];
   //   displayTodos(selectedListId);
   refreshLists();
   displayTodos();
@@ -45,11 +51,17 @@ function displayTodos() {
   // creates a DOM element representing the given todo. Returns the created DOM element
   function todoView(todo) {
     let todoView = document.createElement("div");
-    todoView.className = "todoView";
+    todoView.className = "todo-view";
+
+    let todoCheck = document.createElement("input");
+    todoCheck.type = "checkbox";
+    todoCheck.className = "todo-check";
+    todoCheck.onchange = () => checkTodo(todo.id, todoCheck.checked);
 
     let todoHeader = document.createElement("h2");
     todoHeader.textContent = todo.title;
 
+    todoView.append(todoCheck);
     todoView.append(todoHeader);
     return todoView;
   }
@@ -82,32 +94,32 @@ function displayTodos() {
   function masterListView() {
     const EMPTY_LIST_WARNING = `
     <div>
-        <hr style="width=60%; margin: 1rem"></hr>
         <p style="text-align: center">You haven't added any TODOS yet! Create a new List/Project in the sidebar or add a new TODO above to see them here!</p>
     </div>`;
 
     let listHeader = document.createElement("h1");
     listHeader.textContent = workingList.title;
     listHeader.style.textAlign = "center";
+    listHeader.insertAdjacentHTML(
+      "beforeend",
+      '<hr style="width=60%; margin: 1rem"></hr>',
+    );
 
     todosDisplay.appendChild(listHeader);
 
-    if (workingList.content.length === 0) {
+    if (Object.keys(workingList).length <= 2) {
       todosDisplay.insertAdjacentHTML("beforeend", EMPTY_LIST_WARNING);
     } else {
-      for (let item of workingList.content) {
+      for (let id in workingList) {
+        let item = workingList[id];
         // if item is a list: create a list view and a todo view for each of its todos
         //  - add listView to the DOM
         // if item is a todo: create a todo view and add it to the DOM
         if (item.type === "list") {
           let listDisplay = listView(item);
 
-          for (let i of item.content) {
-            let todo = todoView(i);
-            listDisplay.appendChild(todo);
-          }
           todosDisplay.appendChild(listDisplay);
-        } else {
+        } else if (item.type === "todo") {
           let todo = todoView(item);
           todosDisplay.appendChild(todo);
         }
@@ -117,7 +129,7 @@ function displayTodos() {
 
   let todosDisplay = document.getElementById("todos-display");
   todosDisplay.innerHTML = "";
-  if (workingList === TODOS.defaultList) {
+  if (workingList === STORAGE.masterList) {
     masterListView();
   } else {
     todosDisplay.appendChild(listView(workingList));
@@ -136,7 +148,7 @@ function newList() {
 
   newListTitleInput.value = "";
 
-  TODOS.defaultList.addToList(TODOS.list(listName));
+  STORAGE.newList(listName);
   refreshLists();
   displayTodos();
 }
@@ -159,8 +171,7 @@ function saveNewTodo() {
 
   let todoDescription = document.getElementById("todoDescriptionInput").value;
 
-  let newTodo = TODOS.todo(todoTitle.value, todoDescription);
-  workingList.addToList(newTodo);
+  STORAGE.newTodo(todoTitle.value, todoDescription, workingList.id);
 
   newTodoForm.reset();
   newTodoForm.style.display = "none";
@@ -197,19 +208,23 @@ function displayDefaultList() {
   let listsDisplay = document.getElementById("lists-display");
 
   let defaultListHeader = document.createElement("h2");
-  defaultListHeader.textContent = TODOS.defaultList.title;
-  defaultListHeader.setAttribute("list-id", TODOS.defaultList.id);
+  defaultListHeader.textContent = STORAGE.masterList.title;
+  defaultListHeader.setAttribute("list-id", STORAGE.masterList.id);
 
   defaultListHeader.id = "defaultList";
 
   defaultListHeader.classList.add("list-sidebar-header");
 
-  workingList.id == TODOS.defaultList.id &&
+  workingList.id == STORAGE.masterList.id &&
     defaultListHeader.classList.add("selected-list");
 
   defaultListHeader.onclick = (e) => selectList(e);
 
   listsDisplay.appendChild(defaultListHeader);
+}
+
+function checkTodo(todoId, checked) {
+  return;
 }
 
 refreshLists();

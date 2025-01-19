@@ -121,3 +121,33 @@ header {
   flex-direction: column;
   gap: 1rem;
 }
+
+#todos-display > .todo-view {
+  margin-left: 1rem;
+}
+
+.todo-view {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.todo-check {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid #000; /* Add a border to make it visible */
+  background-color: #fff; /* Set a background color */
+  cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+  position: relative; /* Positioning for the pseudo-element */
+}
+
+.todo-check:checked::after {
+  content: "\2714"; /* Unicode for checkmark */
+  position: absolute;
+  bottom: -2px;
+  left: 0.15rem;
+  font-size: 1.25rem;
+  color: #000; /* Color of the checkmark */
+}
