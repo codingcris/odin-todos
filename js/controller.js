@@ -1,5 +1,4 @@
 import STORAGE from "./storage.js";
-import TODOS from "./todos.js";
 
 let workingList = STORAGE.masterList;
 
@@ -56,13 +55,18 @@ function displayTodos() {
     let todoCheck = document.createElement("input");
     todoCheck.type = "checkbox";
     todoCheck.className = "todo-check";
-    todoCheck.onchange = () => checkTodo(todo.id, todoCheck.checked);
+    todoCheck.checked = todo.complete;
+    todoCheck.onchange = () => checkTodo(todo.list, todo.id);
 
     let todoHeader = document.createElement("h2");
     todoHeader.textContent = todo.title;
 
+    let todoDescription = document.createElement("p");
+    todoDescription.textContent = todo.description;
+
     todoView.append(todoCheck);
     todoView.append(todoHeader);
+    todoView.append(todoDescription);
     return todoView;
   }
 
@@ -105,7 +109,13 @@ function displayTodos() {
       '<hr style="width=60%; margin: 1rem"></hr>',
     );
 
+    let loneTodosSection = document.createElement("div");
+    loneTodosSection.className = "lone-todos-section";
+    let todoListsSection = document.createElement("div");
+
     todosDisplay.appendChild(listHeader);
+    todosDisplay.appendChild(loneTodosSection);
+    todosDisplay.appendChild(todoListsSection);
 
     if (Object.keys(workingList).length <= 2) {
       todosDisplay.insertAdjacentHTML("beforeend", EMPTY_LIST_WARNING);
@@ -118,10 +128,10 @@ function displayTodos() {
         if (item.type === "list") {
           let listDisplay = listView(item);
 
-          todosDisplay.appendChild(listDisplay);
+          todoListsSection.appendChild(listDisplay);
         } else if (item.type === "todo") {
           let todo = todoView(item);
-          todosDisplay.appendChild(todo);
+          loneTodosSection.appendChild(todo);
         }
       }
     }
@@ -223,8 +233,8 @@ function displayDefaultList() {
   listsDisplay.appendChild(defaultListHeader);
 }
 
-function checkTodo(todoId, checked) {
-  return;
+function checkTodo(listId, todoId) {
+  STORAGE.toggleTodoFinished(listId, todoId);
 }
 
 refreshLists();

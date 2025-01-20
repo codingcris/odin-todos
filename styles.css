@@ -122,12 +122,16 @@ header {
   gap: 1rem;
 }
 
-#todos-display > .todo-view {
-  margin-left: 1rem;
+.lone-todos-section {
+  padding-left: 1rem;
 }
 
 .todo-view {
-  display: flex;
+  display: grid;
+  grid-template-areas:
+    "check header"
+    "check description";
+  grid-template-columns: auto 1fr;
   gap: 0.5rem;
 }
 
@@ -141,6 +145,7 @@ header {
   background-color: #fff; /* Set a background color */
   cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
   position: relative; /* Positioning for the pseudo-element */
+  grid-area: check;
 }
 
 .todo-check:checked::after {

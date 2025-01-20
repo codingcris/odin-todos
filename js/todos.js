@@ -17,7 +17,14 @@ export default (function () {
     return { id, type: "list", title, content, addToList, setTitle };
   }
   // todo factory function returns a new todo
-  function todo(title, description = "", dueDate = null, priority = "regular") {
+  function todo(
+    title,
+    list,
+    description = "",
+    dueDate = null,
+    priority = "regular",
+    complete = false,
+  ) {
     const id = crypto.randomUUID();
 
     function setTitle(newTitle) {
@@ -36,6 +43,10 @@ export default (function () {
       priority = newPriority;
     }
 
+    function setComplete(state) {
+      complete = state;
+    }
+
     return {
       id,
       type: "todo",
@@ -43,10 +54,13 @@ export default (function () {
       description,
       dueDate,
       priority,
+      complete,
+      list,
       setTitle,
       setDescription,
       setDueDate,
       setPriority,
+      setComplete,
     };
   }
 

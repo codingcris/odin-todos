@@ -1,7 +1,6 @@
 import TODOS from "./todos.js";
 
 export default (function () {
-  localStorage.clear();
   let masterList = JSON.parse(localStorage.getItem("masterList"));
 
   if (!masterList) {
@@ -20,7 +19,7 @@ export default (function () {
   }
 
   function updateMasterList() {
-    localStorage.setItem("masterList", masterList);
+    localStorage.setItem("masterList", JSON.stringify(masterList));
   }
 
   function newList(title) {
@@ -29,7 +28,7 @@ export default (function () {
   }
 
   function newTodo(title, description, listId) {
-    let todo = TODOS.todo(title, description);
+    let todo = TODOS.todo(title, listId, description);
     if (listId === masterList.id) {
       addToMasterList(todo.id, todo);
     } else {
@@ -38,11 +37,32 @@ export default (function () {
     }
   }
 
+  function selectTodo(listId, todoId) {
+    let todo;
+    if (listId === masterList.id) {
+      todo = masterList[todoId];
+    } else {
+      let list = masterList[listId];
+      for (let item of list.content) {
+        if (item.id === todoId) todo = item;
+      }
+    }
+
+    return todo;
+  }
+
+  function toggleTodoFinished(listId, todoId) {
+    let todo = selectTodo(listId, todoId);
+    todo.complete = !todo.complete;
+    updateMasterList();
+  }
+
   return {
     masterList,
     addToMasterList,
     removeFromMasterList,
     newList,
     newTodo,
+    toggleTodoFinished,
   };
 })();
