@@ -129,8 +129,8 @@ header {
 .todo-view {
   display: grid;
   grid-template-areas:
-    "check header"
-    "check description";
+    "check header date"
+    "check description description";
   grid-template-columns: auto 1fr;
   gap: 0.5rem;
 }
@@ -155,4 +155,23 @@ header {
   left: 0.15rem;
   font-size: 1.25rem;
   color: #000; /* Color of the checkmark */
+}
+
+.todoDueDate {
+  grid-area: date;
+}
+
+.todoDueDate.due::before {
+  content: "Due: ";
+  font-weight: bold;
+}
+
+.todo-view.complete {
+  color: rgba(0, 0, 0, 0.25);
+  text-decoration: line-through;
+}
+
+.dueDateAndTimeInputs {
+  display: flex;
+  gap: 1rem;
 }

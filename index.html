@@ -31,10 +31,13 @@
         <label
           >Description: <input type="text" name="" id="todoDescriptionInput"
         /></label>
-        <label>
-          Due Date:
-          <input type="date" />
-        </label>
+        <div class="dueDateAndTimeInputs">
+          <label>
+            Due Date:
+            <input type="date" id="todoDueDateInput" />
+          </label>
+          <button id="addTime">Time</button>
+        </div>
         <label style="display: flex; gap: 1rem"
           >Important:
           <input type="checkbox" style="width: 1rem" />

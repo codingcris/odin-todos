@@ -51,22 +51,35 @@ function displayTodos() {
   function todoView(todo) {
     let todoView = document.createElement("div");
     todoView.className = "todo-view";
+    todoView.setAttribute("data-id", todo.id);
 
     let todoCheck = document.createElement("input");
     todoCheck.type = "checkbox";
     todoCheck.className = "todo-check";
     todoCheck.checked = todo.complete;
+    if (todo.complete) {
+      todoView.classList.add("complete");
+    }
     todoCheck.onchange = () => checkTodo(todo.list, todo.id);
 
     let todoHeader = document.createElement("h2");
     todoHeader.textContent = todo.title;
 
     let todoDescription = document.createElement("p");
+    todoDescription.className = "todoDescription";
     todoDescription.textContent = todo.description;
+
+    let todoDate = document.createElement("p");
+    todoDate.className = "todoDueDate";
+    if (todo.dueDate) {
+      todoDate.classList.add("due");
+    }
+    todoDate.textContent = todo.dueDate;
 
     todoView.append(todoCheck);
     todoView.append(todoHeader);
     todoView.append(todoDescription);
+    todoView.append(todoDate);
     return todoView;
   }
 
@@ -181,7 +194,14 @@ function saveNewTodo() {
 
   let todoDescription = document.getElementById("todoDescriptionInput").value;
 
-  STORAGE.newTodo(todoTitle.value, todoDescription, workingList.id);
+  let todoDueDate = document.getElementById("todoDueDateInput").value;
+
+  STORAGE.newTodo(
+    todoTitle.value,
+    todoDescription,
+    workingList.id,
+    todoDueDate,
+  );
 
   newTodoForm.reset();
   newTodoForm.style.display = "none";
@@ -234,7 +254,10 @@ function displayDefaultList() {
 }
 
 function checkTodo(listId, todoId) {
-  STORAGE.toggleTodoFinished(listId, todoId);
+  let complete = STORAGE.toggleTodoFinished(listId, todoId);
+
+  let todoView = document.querySelector(`[data-id="${todoId}"]`);
+  todoView.classList.toggle("complete");
 }
 
 refreshLists();
